@@ -1,0 +1,203 @@
+<script type="ts">
+import { ColorsHelper } from "../../helpers/colors";
+import { createEventDispatcher, onMount } from "svelte";
+import LinkTo from "../link-to/LinkTo.svelte";
+import * as wanakana from "wanakana";
+
+export let data;
+export let question;
+
+const ch = new ColorsHelper();
+const dispatcher = createEventDispatcher();
+
+let colors = ch.getCardColor('');
+let answer = '';
+let textInput;
+let flipClass = '';
+let questionText = '';
+let answerClass ='bg-gray-100';
+let isChecked = false;
+let isCorrect = false;
+
+function nextRandom(max){
+    return ~~(Math.random() * (max + 1));
+}
+
+function checkAnswer(e) { 
+    isCorrect = false;
+    if(e.code === 'Enter') {
+        isChecked = true;
+        const lowercaseAnswer = answer.toLowerCase();
+        if(question === 'meaning'){
+            if(data['primary'].toLowerCase() === lowercaseAnswer || data['alternatives'].filter((o) => o.toLowerCase() === lowercaseAnswer).length > 0){
+                isCorrect = true;
+            }
+        }else if(data[question] === wanakana.toKana(textInput.value)) {
+            isCorrect = true;
+        }
+    }else{
+        isChecked = false;
+    }
+}
+function flip() {
+    flipClass = flipClass.length > 0 ? '' : 'card--rotate';
+}
+function reset() {
+    answer = '';
+    isChecked = false;
+    questionText = `${data.type} ${question === 'meaning' ? 'Meaning': 'Reading'}`;
+}
+function nextCard(){
+    dispatcher('card::next');
+}
+onMount(() => {
+    textInput = document.getElementById('wanakana_input');
+});
+
+$: {
+    reset();
+    colors = ch.getCardColor(data.type);    
+    if(question == 'meaning'){
+        if(textInput){
+            try{
+                wanakana.unbind(textInput);
+            }catch{}
+        }
+    }else{
+        if(textInput){
+            wanakana.bind(textInput);
+        }
+    }
+}
+</script>
+
+<style>
+    .scene { perspective: 1000px;}
+    .card { 
+        transition: .8s ease-in-out;width: 100%;height: 100%;
+        transform-style: preserve-3d;
+    }
+    .card--front,.card--back { position: absolute;backface-visibility: hidden;width: 100%;height: 100%;z-index: 0;}
+    .card--back {transform: rotateY(180deg);}
+    .card--rotate .card {transform: rotateY(180deg);}
+    .card--rotate .card--back {transform: rotateY(180deg);z-index: 1;}
+    .dots button::before {
+        font-size: 24px;
+        line-height: 20px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        height: 20px;
+        content: '•';
+        text-align: center;
+        opacity: .25;
+        color: black;
+    }
+    .dots:hover button::before,
+    .dots-selected button::before {
+        opacity: 1;
+        color: black;
+        transition: all .4s ease-in-out;
+    }
+</style>
+
+<div class="{flipClass} scene inline-block w-96 h-96 rounded-md m-16 bg-gray-50}">
+    <div class="card">
+        <div class="card--front shadow-lg">
+            <div class="h-64 min-w-full bg-gradient-to-br {colors} flex justify-center items-center relative cursor-pointer"
+                 title="Double-click to flip card"     
+                 on:dblclick={flip}>
+                <h1 class="font-semibold text-8xl text-white">{data.character}</h1>
+            </div>
+            <div class="mx-4 mt-4 text-gray-600">
+                <div class="flex {answerClass} p-2 min-w-full rounded-lg relative">
+                    {#if isChecked}
+                    {#if isCorrect}
+                    <div class="text-green-600 absolute left-2 top-4">
+                        <svg class="w-4 h-4" viewBox="0 0 80 80" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M40 68C55.464 68 68 55.464 68 40C68 24.536 55.464 12 40 12C24.536 12 12 24.536 12 40C12 55.464 24.536 68 40 68ZM56.8805 32.3737C58.0465 31.1966 58.0465 29.2882 56.8805 28.1111C55.7145 26.934 53.824 26.934 52.6579 28.1111L35.0769 45.8588L27.342 38.0506C26.176 36.8735 24.2855 36.8735 23.1195 38.0506C21.9534 39.2277 21.9534 41.1361 23.1195 42.3132L31.5581 50.8318C33.5015 52.7937 36.6523 52.7937 38.5957 50.8318L56.8805 32.3737Z" />
+                        </svg>
+                    </div>
+                    {:else}
+                    <div class="text-red-600 absolute left-2 top-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    {/if}
+                    {/if}
+                    <input id="wanakana_input" lang="ja" bind:value={answer} class="bg-transparent px-4 outline-none min-w-full text-center text-2xl" on:keyup={checkAnswer} type="text" />
+                    <div class="text-gray-600 absolute right-1 top-4 cursor-pointer" on:click={nextCard}>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="text-gray-400 mt-4 capitalize">{questionText}</div>
+            </div> 
+        </div>
+        <div class="card--back shadow-lg">
+            <div class="h-64 bg-gray-100 hover:bg-gray-200 flex justify-center items-center relative cursor-pointer" title="Double-click to flip card" on:dblclick={flip}>
+                <h1 class="font-semibold text-8xl text-gray-800">{data.character}</h1>
+                <div class="absolute top-1 left-1 ">
+                    {#each data.composition as item (item.character)}
+                    <LinkTo title={item.primary} type={item.type}>{item.character}</LinkTo>
+                    {/each}
+                </div>
+            </div>
+            <div class="mx-4 my-2 relative">
+                {#if question == 'meaning'}
+                <div>
+                    <div class="font-medium text-base text-gray-800 mb-2">
+                        <span class="text-lg font-bold capitalize">{data.primary}</span>
+                        <span class="text-sm text-gray-500 capitalize">{#each data.alternatives as alternative}, {alternative}{/each}</span>
+                    </div>
+                    <p class="font-normal text-gray-600 text-xs mb-4">{data.mnemonic}</p>
+                </div>
+                {:else if question == 'on-yomi'}
+                <div>
+                    <div class="font-medium text-base text-gray-800 mb-2">
+                        <span class="text-lg font-bold">on'yomi</span>
+                        <span class="text-sm text-gray-500">{data['on-yomi']}</span>
+                    </div>
+                    <p class="font-normal text-gray-600 text-xs mb-4">{data['on-yomi-mnemonic']}</p>    
+                </div>
+                {:else if question == 'kun-yomi'}
+                <div>
+                    <div class="font-medium text-base text-gray-800 mb-2">
+                        <span class="text-lg font-bold">kun'yomi</span>
+                        <span class="text-sm text-gray-500">{data['kun-yomi']}</span>
+                    </div>
+                    <p class="font-normal text-gray-600 text-xs mb-4">{data['kun-yomi-mnemonic']}</p>    
+                </div>
+                {:else}
+                <div>
+                    <div class="font-medium text-base text-gray-800 mb-2">
+                        <span class="text-lg font-bold">reading</span>
+                        <span class="text-sm text-gray-500">{data['reading']}</span>
+                    </div>
+                    <p class="font-normal text-gray-600 text-xs mb-4">{data['reading-mnemonic']}</p>    
+                </div>
+                {/if}
+            </div>            
+            <ul class="block absolute bottom-0 text-center min-w-full mb-2 leading-none space-x-1">
+                {#if data['primary'] && data['primary'].length > 0}
+                <li title="Meaning" class="dots {question == 'meaning'?'dots-selected':''} relative inline-block w-4 h-4 cursor-pointer" on:click={() => question = 'meaning'}>
+                    <button type="button" class="block w-4 h-4 border-0 cursor-pointer outline-none bg-transparent text-transparent p-1">1</button>
+                </li>
+                {/if}
+                {#if data['on-yomi'] && data['on-yomi'].length > 0}
+                <li title="On'yomi reading" class="dots {question == 'on-yomi'?'dots-selected':''} relative inline-block w-4 h-4 cursor-pointer" on:click={() => question = 'on-yomi'}>
+                    <button type="button" class="block w-4 h-4 border-0 cursor-pointer outline-none bg-transparent text-transparent p-1">2</button>
+                </li>
+                {/if}
+                {#if data['kun-yomi'] && data['kun-yomi'].length > 0}
+                <li title="Kun'yomi" class="dots {question == 'kun-yomi'?'dots-selected':''} relative inline-block w-4 h-4 cursor-pointer" on:click={() => question = 'kun-yomi'}>
+                    <button type="button" class="block w-4 h-4 border-0 cursor-pointer outline-none bg-transparent text-transparent p-1">3</button>
+                </li>
+                {/if}
+            </ul>
+        </div>  
+    </div>
+  </div>
