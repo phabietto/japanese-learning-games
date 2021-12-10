@@ -6,6 +6,7 @@ import * as wanakana from "wanakana";
 
 export let data;
 export let question;
+export let browse = true;
 
 const ch = new ColorsHelper();
 const dispatcher = createEventDispatcher();
@@ -48,7 +49,9 @@ function reset() {
     questionText = `${data.type} ${question === 'meaning' ? 'Meaning': 'Reading'}`;
 }
 function nextCard(){
-    dispatcher('card::next');
+    if(browse || (isChecked && isCorrect)){
+        dispatcher('card::next');
+    }
 }
 onMount(() => {
     textInput = document.getElementById('wanakana_input');
@@ -72,7 +75,7 @@ $: {
 </script>
 
 <style>
-    .scene { perspective: 1000px;}
+    .scene { perspective: 1000px; height: 400px;}
     .card { 
         transition: .8s ease-in-out;width: 100%;height: 100%;
         transform-style: preserve-3d;
@@ -102,15 +105,15 @@ $: {
     }
 </style>
 
-<div class="{flipClass} scene inline-block w-96 h-96 rounded-md m-16 bg-gray-50}">
+<div class="{flipClass} scene inline-block w-96 rounded-md m-16 bg-gray-50}">
     <div class="card">
-        <div class="card--front shadow-lg">
-            <div class="h-64 min-w-full bg-gradient-to-br {colors} flex justify-center items-center relative cursor-pointer"
+        <div class="card--front shadow-lg flex flex-col">
+            <div class="h-60 min-w-full bg-gradient-to-br {colors} flex justify-center items-center relative cursor-pointer"
                  title="Double-click to flip card"     
                  on:dblclick={flip}>
-                <h1 class="font-semibold text-8xl text-white">{data.character}</h1>
+                <h1 class="font-normal text-8xl text-white">{data.character}</h1>
             </div>
-            <div class="mx-4 mt-4 text-gray-600">
+            <div class="m-4 text-gray-600 flex-grow flex flex-col">
                 <div class="flex {answerClass} p-2 min-w-full rounded-lg relative">
                     {#if isChecked}
                     {#if isCorrect}
@@ -134,23 +137,23 @@ $: {
                         </svg>
                     </div>
                 </div>
-                <div class="text-gray-400 mt-4 capitalize">{questionText}</div>
+                <div class="text-gray-400 mt-2 capitalize flex flex-grow flex-col justify-center items-center">{questionText}</div>
             </div> 
         </div>
-        <div class="card--back shadow-lg">
-            <div class="h-64 bg-gray-100 hover:bg-gray-200 flex justify-center items-center relative cursor-pointer" title="Double-click to flip card" on:dblclick={flip}>
-                <h1 class="font-semibold text-8xl text-gray-800">{data.character}</h1>
+        <div class="card--back shadow-lg flex flex-col">
+            <div class="h-60 bg-gray-100 hover:bg-gray-200 flex justify-center items-center relative cursor-pointer" title="Double-click to flip card" on:dblclick={flip}>
+                <h1 class="font-normal text-8xl text-gray-800">{data.character}</h1>
                 <div class="absolute top-1 left-1 ">
                     {#each data.composition as item (item.character)}
                     <LinkTo title={item.primary} type={item.type}>{item.character}</LinkTo>
                     {/each}
                 </div>
             </div>
-            <div class="mx-4 my-2 relative">
+            <div class="mx-4 my-2 flex-grow">
                 {#if question == 'meaning'}
                 <div>
                     <div class="font-medium text-base text-gray-800 mb-2">
-                        <span class="text-lg font-bold capitalize">{data.primary}</span>
+                        <span class="text-lg font-semibold capitalize">{data.primary}</span>
                         <span class="text-sm text-gray-500 capitalize">{#each data.alternatives as alternative}, {alternative}{/each}</span>
                     </div>
                     <p class="font-normal text-gray-600 text-xs mb-4">{data.mnemonic}</p>
@@ -181,7 +184,7 @@ $: {
                 </div>
                 {/if}
             </div>            
-            <ul class="block absolute bottom-0 text-center min-w-full mb-2 leading-none space-x-1">
+            <ul class="block text-center min-w-full mb-2 leading-none space-x-1">
                 {#if data['primary'] && data['primary'].length > 0}
                 <li title="Meaning" class="dots {question == 'meaning'?'dots-selected':''} relative inline-block w-4 h-4 cursor-pointer" on:click={() => question = 'meaning'}>
                     <button type="button" class="block w-4 h-4 border-0 cursor-pointer outline-none bg-transparent text-transparent p-1">1</button>

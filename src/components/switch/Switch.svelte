@@ -37,7 +37,7 @@
 </script>
 
 {#if type === 'toggle'}
-<div class="toggle w-full mb-12">  
+<div class="toggle w-full mb-4">  
     <label for={id} class="flex items-center cursor-pointer">
         <div class="relative">
             <input id={id} type="checkbox" class="sr-only" {disabled} bind:checked on:change={handleClick}/>
