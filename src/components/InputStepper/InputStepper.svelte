@@ -54,7 +54,7 @@
     });
 </script>
 
-<div class="inline-flex p-2 rounded-lg relative items-center bg-gray-100 text-gray-600">
+<div class="inline-flex p-1 rounded-lg relative items-center bg-gray-100 text-gray-600">
     {#if !compact}
     <button 
         type="button"
@@ -63,7 +63,7 @@
         {disabled}
         on:click={()=>updateValue(-1)}
     >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
     </button>
@@ -72,7 +72,7 @@
         type="number"
         pattern="[0-9]*"
         placeholder="cards"
-        class="bg-transparent outline-none text-lg text-center {inputPadding} {classes}"
+        class="bg-transparent outline-none text-base px-1 text-right {inputPadding} {classes}"
         {max} {min} {step} {value}
         {readonly} {disabled}
         on:change
@@ -94,7 +94,7 @@
             {disabled}
             on:click={()=>updateValue(1)}
         >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" />
             </svg>
         </button>
@@ -104,7 +104,7 @@
             {disabled}
             on:click={()=>updateValue(-1)}
         >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
         </button>
@@ -118,7 +118,7 @@
         {disabled}
         on:click={()=>updateValue(-1)}
     >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
     </button>

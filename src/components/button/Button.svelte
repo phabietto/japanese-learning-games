@@ -5,6 +5,8 @@
     export let disabled = false;
     export let iconLeft = true;
     export let primary = null;
+    export let fill = 'fill-current';
+    export let stroke = 'stroke-transparent';
 
     const hasSlot = $$props.$$slots && $$props.$$slots !== undefined;
 
@@ -28,7 +30,7 @@
     {text}     
     {/if}
     {#if hasSlot}
-    <svg class="{iconPosition} h-5 w-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+    <svg class="{iconPosition} h-5 w-5 {fill} {stroke}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <slot></slot>
     </svg>
     {/if}

@@ -1,11 +1,10 @@
 <script>
     import { ColorsHelper } from "../../helpers/colors";
     import { createEventDispatcher, onMount } from "svelte";
-    import { ItemType } from "../../models/Enums";
     
     export let title = '';
     export let roll = true;
-    export let type = ItemType.Radical;
+    export let type;
 
     const dispatcher = createEventDispatcher();
     let showLink = false;

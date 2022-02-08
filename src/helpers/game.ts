@@ -1,4 +1,5 @@
 export class Game {
-    cards: []
-
+    public nextRandom(max: number): number {
+        return ~~(Math.random() * (max + 1));
+    }
 }
