@@ -9,9 +9,6 @@ import Switch from './components/switch/Switch.svelte';
 import { CardModel } from './models/CardModel';
 import { ItemType } from './models/Enums';
 
-onMount(() => {
-});
-
 const emptyCard = new CardModel({});
 let question = 'meaning';
 function switchSubtype(){
@@ -19,71 +16,95 @@ function switchSubtype(){
 }
 
 let loadedCards: CardModel[] = [];
-let selectedCards = [];
+let selectedCards: CardModel[] = [];
 let gameCards: CardModel[] = [];
 let currentCard: CardModel = emptyCard;
 let numberOfCardsToPlayWith = 5;
 let currentCardIndex = 0;
-let levelToLoad = 7;
+let levelToLoad;
+let radicalsToggle = false;
+let kanjisToggle = false;
+let vocabularyToggle = false;
+let areCardTypeSelectorsEnabled = false
+let loadedLevels: number[] = [];
+let isGameMode = false;
+
+onMount(() => {});
+
+$: {
+  areCardTypeSelectorsEnabled = loadedCards.length > 0;
+}
 
 function loadLevel() {
+  if(loadedLevels.indexOf(levelToLoad) >= 0){
+    return;
+  }
+
   fetch(`/japanese-${(''+levelToLoad).padStart(2,'0')}.json`)
     .then(response => response.json())
     .then(data => {
       loadedCards = loadedCards.concat(data.filter((card: any) => card.character.length > 0).map((o: any) => new CardModel(o)));
       selectCards(loadedCards);
-      if(selectCards.length > 0){
-        currentCard = selectedCards[currentCardIndex];
-      }else{
-        currentCard = emptyCard;
-      }
+      loadedLevels = [levelToLoad, ...loadedLevels];
     })
     .catch(e => console.log(e));
 }
 function resetLevels() {
   currentCard = emptyCard;
+  currentCardIndex = 0;
+
   loadedCards = [];
+  loadedLevels = [];
   selectedCards = [];
   gameCards = [];
+
+  radicalsToggle = false;
+  kanjisToggle = false;
+  vocabularyToggle = false;
 }
 
 function switchCard(direction: number){
-  let len = isPlayButtonEnabled
+  let len = isGameMode
     ? gameCards.length
     : selectedCards.length;
-  
-  if(isPlayButtonEnabled && gameCards.length == 0){
-    return;
-  }
-  if(!isPlayButtonEnabled && selectedCards.length == 0){
-    return;
-  }
 
-  // console.log('switchCard::pre', direction, currentCardIndex);
-  if(direction > 0) {
+  if(!isGameMode) {
+    //  'browse' mode: next and previous
+    if(selectedCards.length == 0) {
+      return;
+    }
+    if(direction > 0) {
+      if(currentCardIndex >= len - 1) {
+        currentCardIndex = 0;
+      } else {
+        currentCardIndex++;
+      }
+    } else {
+      if(currentCardIndex == 0) {
+        currentCardIndex = len-1;
+      } else {
+        currentCardIndex--;
+      }
+    }
+  } else {
+    //  'game' mode: forward only, skip verified cards
+    if(gameCards.length == 0) {
+      return;
+    }
+
     if(currentCardIndex >= len - 1) {
       currentCardIndex = 0;
     } else {
       currentCardIndex++;
     }
-  } else {
-    if(currentCardIndex == 0) {
-      currentCardIndex = len-1;
-    } else {
-      currentCardIndex--;
-    }
   }
-  // console.log('switchCard::post', direction, currentCardIndex);
 
-  if(isPlayButtonEnabled){
-    currentCard = gameCards[currentCardIndex];
-  }else{
-    currentCard = selectedCards[currentCardIndex];
-  }
+  selectCard(currentCardIndex);
 }
 
 function selectCards(list: CardModel[]){
   selectedCards = [];
+  currentCardIndex = 0;
   if(radicalsToggle){
     selectedCards = list.filter((o) => o.Type === ItemType.Radical);
   }
@@ -92,57 +113,91 @@ function selectCards(list: CardModel[]){
   }
   if(vocabularyToggle){
     selectedCards = [...selectedCards, ...list.filter((o) => o.Type === ItemType.Vocabulary)]
-  }  
-  currentCard = selectedCards[0];
+  }
+  selectCard(currentCardIndex);
 }
 
-
-let radicalsToggle = true;
-let kanjisToggle = true;
-let vocabularyToggle = true;
-let isPlayButtonEnabled = false;
+function selectCard(index: number) {  
+  if(isGameMode){
+    if(gameCards.length > 0){
+      currentCard = gameCards[index];
+      currentCardIndex = index;
+    }else{
+      currentCard = emptyCard;
+      currentCardIndex = -1;
+    }
+    currentCard = gameCards[index];
+  }else{
+    if(selectedCards.length > 0){
+      currentCard = selectedCards[index];
+      currentCardIndex = index;
+    }else{
+      currentCard = emptyCard;
+      currentCardIndex = -1;
+    }
+  }
+}
 
 function play(){
-  isPlayButtonEnabled = true;
+  isGameMode = true;
   let tmp = [...selectedCards];
   let len = tmp.length;
   let list = [];
-  //  select the cards for the game
-  for(let i = 0; i< numberOfCardsToPlayWith; i++){
+
+  //  select cards for the game
+  //  (duplicate the cards based on the questions available)
+  for(let i = 0; i < numberOfCardsToPlayWith; i++){
     let o = tmp.splice(~~(Math.random() * len), 1)[0];
-    switch(o.type){
+    switch(o.Type){
       case ItemType.Radical:
-        list.push(o);
+        list.push(o);// meaning
+        break;
+      case ItemType.Kanji:
+        list.push(o);// meaning
+        list.push(o);// reading
+        break;
+      case ItemType.Vocabulary:
+        list.push(o);// meaning
+        list.push(o);// reading
         break;
     }
     list.push();
-    //game = [...game, tmp.splice(~~(Math.random() * len), 1)[0]];
     len = tmp.length;
   }
-  //  duplicate them based on questions available per cards
-  //  i.e. Radicals = 1, Kanjis = 2, Vocabulary = 2
-  for(let i = 0; i < list.length; i++){
 
+  //  shuffle
+  len = list.length;
+  tmp = [];
+  while(len > 0) {
+    tmp.push(list.splice(~~(Math.random() * len), 1)[0]);
+    len = list.length;
   }
-  currentCardIndex = 0;
-  currentCard = gameCards[0];
+
+  gameCards = [...tmp];
+  selectCard(0);
 }
-function reset(){
-  isPlayButtonEnabled = false;
-  currentCardIndex = 0;
-  currentCard = selectedCards[0];
+
+function resetGame(){
+  isGameMode = false;
   gameCards = [];
+  selectCard(0);
 }
 </script>
+
+<style>
+  :root {
+    --svelte-rgb: 255, 62, 0;
+  }
+</style>
 
 <Tailwind />
 
 <main class="text-center p-4 mx-0 w-screen flex justify-center items-center">
   <div class="inline-block w-1/6 space-y-2">
     <div class="flex flex-col justify-start w-1/3">
-      <Switch type="toggle" id="radical" text="Radicals" bind:checked={radicalsToggle} on:switch::click={() => selectCards(loadedCards)} />
-      <Switch type="toggle" id="kanji" text="Kanjis" bind:checked={kanjisToggle} on:switch::click={() => selectCards(loadedCards)} />
-      <Switch type="toggle" id="vocabulary" text="Vocabulary" bind:checked={vocabularyToggle} on:switch::click={() => selectCards(loadedCards)} />
+      <Switch type="toggle" id="radical" text="Radicals" disabled={!areCardTypeSelectorsEnabled} bind:checked={radicalsToggle} on:switch::click={() => selectCards(loadedCards)} />
+      <Switch type="toggle" id="kanji" text="Kanjis" disabled={!areCardTypeSelectorsEnabled} bind:checked={kanjisToggle} on:switch::click={() => selectCards(loadedCards)} />
+      <Switch type="toggle" id="vocabulary" text="Vocabulary" disabled={!areCardTypeSelectorsEnabled} bind:checked={vocabularyToggle} on:switch::click={() => selectCards(loadedCards)} />
     </div>
     <div class="flex space-x-2">
       <div class="inline-flex p-2 rounded-lg relative items-center bg-gray-100 text-gray-600">
@@ -157,19 +212,27 @@ function reset(){
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
       </Button>
     </div>
+    <div class="text-left">
+      <h3>Stats</h3>
+      <ul>
+        <li>Loaded levels: {#if loadedLevels.length > 0}{loadedLevels.join(',')}{:else}NONE{/if}</li>
+        <li>Cards selected: {selectedCards.length}</li>
+        <li>Mode: {#if isGameMode}GAME{:else}BROWSE{/if}</li>
+      </ul>
+    </div>
   </div>
   <div class="w-2/6 mx-4 mt-4">
     {#if currentCard}
-    <Card card={currentCard} {question} browse={!isPlayButtonEnabled} on:card::next={() => switchCard(1)} on:card::previous={() => switchCard(-1)}/>
+    <Card card={currentCard} question={currentCard.nextQuestion()} browse={!isGameMode} on:card::next={() => switchCard(1)} on:card::previous={() => switchCard(-1)}/>
     {/if}
   </div>
   <div class="inline-block w-1/6 space-y-2 text-left">
-    <InputStepper class="w-16" bind:value={numberOfCardsToPlayWith} min="1" max={selectedCards.length} compact disabled={isPlayButtonEnabled} />
+    <InputStepper class="w-16" bind:value={numberOfCardsToPlayWith} min="1" max={selectedCards.length} compact disabled={isGameMode} />
     <div class="flex space-x-2">
-      <Button text="Reset" fill="fill-transparent" stroke="stroke-current" on:click={reset}>
+      <Button text="Reset" fill="fill-transparent" stroke="stroke-current" on:click={resetGame}>
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
       </Button>
-      <Button text="Play game" disabled={isPlayButtonEnabled} iconLeft={false} primary fill="fill-transparent" stroke="stroke-current" on:click={play}>
+      <Button text="Play game" disabled={isGameMode} iconLeft={false} primary fill="fill-transparent" stroke="stroke-current" on:click={play}>
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
       </Button>
     </div>
@@ -179,8 +242,3 @@ function reset(){
   </div>
 </main>
 <ActiveBreakpointIndicator />
-<style>
-  :root {
-    --svelte-rgb: 255, 62, 0;
-  }
-</style>

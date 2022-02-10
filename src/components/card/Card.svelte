@@ -4,9 +4,11 @@ import { createEventDispatcher, onMount } from "svelte";
 import LinkTo from "../link-to/LinkTo.svelte";
 import * as wanakana from "wanakana";
 import { CardModel } from "../../models/CardModel";
+import { CardSubType } from "../../models/Enums";
+import ActiveBreakpointIndicator from "../debug/ActiveBreakpointIndicator.svelte";
 
 export let card: CardModel = new CardModel({});
-export let question;
+export let question: CardSubType = CardSubType.None;
 export let browse = true;
 
 const ch = new ColorsHelper();
@@ -17,7 +19,7 @@ let browsing = '';
 let answer = '';
 let textInput;
 let flipClass = '';
-let questionText = '';
+let questionText: string;
 let answerClass ='bg-gray-100';
 let isChecked = false;
 let isCorrect = false;
@@ -46,23 +48,26 @@ $: {
 
 function checkAnswer(e: KeyboardEvent) { 
     if(e.code === 'Enter') {
-        //if we checked the answer and it's correct let's move to the next question
-        if(isChecked && isCorrect){
-            nextCard();
-            return;
-        }
-        const lowercaseAnswer = answer.toLowerCase().trim();
-        const acceptedAnswers = [];
-        acceptedAnswers.push(card['primary']);
-        acceptedAnswers.concat(card['alternatives']);
-        if(question === 'meaning'){
-            if(acceptedAnswers.filter((o) => o.toLowerCase().trim() === lowercaseAnswer).length > 0){
-                isCorrect = true;
-            }
-        }else if(card[question] === wanakana.toKana(textInput.value)) {
-            isCorrect = true;
-        }
         isChecked = true;
+        isCorrect = true;
+        nextCard();
+        //if we checked the answer and it's correct let's move to the next question
+        // if(isChecked && isCorrect){
+        //     nextCard();
+        //     return;
+        // }
+        // const lowercaseAnswer = answer.toLowerCase().trim();
+        // const acceptedAnswers = [];
+        // acceptedAnswers.push(card['primary']);
+        // acceptedAnswers.concat(card['alternatives']);
+        // if(question === 'meaning'){
+        //     if(acceptedAnswers.filter((o) => o.toLowerCase().trim() === lowercaseAnswer).length > 0){
+        //         isCorrect = true;
+        //     }
+        // }else if(card[question] === wanakana.toKana(textInput.value)) {
+        //     isCorrect = true;
+        // }
+        // isChecked = true;
     }else{
         isChecked = false;
     }
@@ -73,7 +78,7 @@ function flip() {
 function reset() {
     answer = '';
     isChecked = false;
-    questionText = `${card.Type} ${question === 'meaning' ? 'Meaning': 'Reading'}`;
+    questionText = `${card.Type} ${question === CardSubType.Meaning ? 'Meaning': 'Reading'}`;
 }
 function nextCard(){
     if(browse || (isChecked && isCorrect)){
@@ -171,7 +176,7 @@ function previousCard(){
         </div>
         <div class="card--back shadow-lg flex flex-col">
             <div class="h-60 bg-gray-100 hover:bg-gray-200 flex justify-center items-center relative cursor-pointer" title="Double-click to flip card" on:dblclick={flip}>
-                <h1 class="font-normal text-7xl text-gray-800" on:dblclick|stopPropagation>{card.Character}</h1>
+                <h1 class="font-normal text-7xl text-gray-800 select-none" on:dblclick|stopPropagation>{card.Character}</h1>
                 <div class="absolute top-1 left-1 ">
                     {#each card.Composition as item (item.Character)}
                     <LinkTo title={item.Primary} type={item.Type}>{item.Character}</LinkTo>
@@ -191,41 +196,46 @@ function previousCard(){
                 <div>
                     <div class="font-medium text-base text-gray-800 mb-2">
                         <span class="text-lg font-bold">on'yomi</span>
-                        <span class="text-sm text-gray-500">{card['on-yomi']}</span>
+                        <span class="text-sm text-gray-500">{@html card.OnYomi.join(',')}</span>
                     </div>
-                    <p class="font-normal text-gray-600 text-xs mb-4">{card['on-yomi-mnemonic']}</p>    
+                    <p class="font-normal text-gray-600 text-xs mb-4">{@html card.OnYomiMnemonic}</p>    
                 </div>
                 {:else if question == 'kun-yomi'}
                 <div>
                     <div class="font-medium text-base text-gray-800 mb-2">
                         <span class="text-lg font-bold">kun'yomi</span>
-                        <span class="text-sm text-gray-500">{card['kun-yomi']}</span>
+                        <span class="text-sm text-gray-500">{@html card.KunYomi.join(',')}</span>
                     </div>
-                    <p class="font-normal text-gray-600 text-xs mb-4">{card['kun-yomi-mnemonic']}</p>    
+                    <p class="font-normal text-gray-600 text-xs mb-4">{@html card.KunYomiMnemonic}</p>    
                 </div>
                 {:else}
                 <div>
                     <div class="font-medium text-base text-gray-800 mb-2">
                         <span class="text-lg font-bold">reading</span>
-                        <span class="text-sm text-gray-500">{card['reading']}</span>
+                        <span class="text-sm text-gray-500">{@html card.Reading.join(',')}</span>
                     </div>
-                    <p class="font-normal text-gray-600 text-xs mb-4">{card['reading-mnemonic']}</p>    
+                    <p class="font-normal text-gray-600 text-xs mb-4">{@html card.ReadingMnemonic}</p>    
                 </div>
                 {/if}
             </div>            
             <ul class="block text-center min-w-full mb-2 leading-none space-x-1">
-                {#if card['primary'] && card['primary'].length > 0}
-                <li title="Meaning" class="dots {question == 'meaning'?'dots-selected':''} relative inline-block w-4 h-4 cursor-pointer" on:click={() => question = 'meaning'}>
+                {#if card.Meaning && card.Meaning.length > 0}
+                <li title="Meaning" class="dots {question == CardSubType.Meaning?'dots-selected':''} relative inline-block w-4 h-4 cursor-pointer" on:click={() => question = CardSubType.Meaning}>
                     <button type="button" class="block w-4 h-4 border-0 cursor-pointer outline-none bg-transparent text-transparent p-1">1</button>
                 </li>
                 {/if}
-                {#if card['on-yomi'] && card['on-yomi'].length > 0}
-                <li title="On'yomi reading" class="dots {question == 'on-yomi'?'dots-selected':''} relative inline-block w-4 h-4 cursor-pointer" on:click={() => question = 'on-yomi'}>
+                {#if card.OnYomi && card.OnYomi.length > 0}
+                <li title="On'yomi reading" class="dots {question == CardSubType.OnYomi?'dots-selected':''} relative inline-block w-4 h-4 cursor-pointer" on:click={() => question = CardSubType.OnYomi}>
                     <button type="button" class="block w-4 h-4 border-0 cursor-pointer outline-none bg-transparent text-transparent p-1">2</button>
                 </li>
                 {/if}
-                {#if card['kun-yomi'] && card['kun-yomi'].length > 0}
-                <li title="Kun'yomi" class="dots {question == 'kun-yomi'?'dots-selected':''} relative inline-block w-4 h-4 cursor-pointer" on:click={() => question = 'kun-yomi'}>
+                {#if card.KunYomi && card.KunYomi.length > 0}
+                <li title="Kun'yomi" class="dots {question == CardSubType.KunYomi?'dots-selected':''} relative inline-block w-4 h-4 cursor-pointer" on:click={() => question = CardSubType.KunYomi}>
+                    <button type="button" class="block w-4 h-4 border-0 cursor-pointer outline-none bg-transparent text-transparent p-1">3</button>
+                </li>
+                {/if}
+                {#if card.Reading && card.Reading.length > 0}
+                <li title="Reading" class="dots {question == CardSubType.Reading?'dots-selected':''} relative inline-block w-4 h-4 cursor-pointer" on:click={() => question = CardSubType.Reading}>
                     <button type="button" class="block w-4 h-4 border-0 cursor-pointer outline-none bg-transparent text-transparent p-1">3</button>
                 </li>
                 {/if}

@@ -15,7 +15,7 @@ export class ColorsHelper {
             case ItemType.Kanji: return 'from-pink-500 to-pink-900 hover:to-pink-800 hover:from-pink-600';
             case ItemType.Vocabulary: return 'from-purple-500 to-purple-900 hover:to-purple-800 hover:from-purple-600';
             case ItemType.Radical: return 'from-blue-400 to-blue-800 hover:to-blue-700 hover:from-blue-500';
-            default: return 'from-gray-400 to-gray-800 hover:to-gray-700 hover:from-gray-500';
+            default: return 'from-gray-200 to-gray-700 hover:to-gray-600 hover:from-gray-300';
         }
     }
 }

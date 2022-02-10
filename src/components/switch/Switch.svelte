@@ -19,6 +19,9 @@
     input[type='checkbox']:disabled:checked + .track {
         @apply bg-blue-200;
     }
+    .disabled {
+        @apply cursor-not-allowed;
+    }
 </style>
 
 <script>
@@ -38,7 +41,7 @@
 
 {#if type === 'toggle'}
 <div class="toggle w-full mb-4">  
-    <label for={id} class="flex items-center cursor-pointer">
+    <label for={id} class="flex items-center cursor-pointer" class:disabled>
         <div class="relative">
             <input id={id} type="checkbox" class="sr-only" {disabled} bind:checked on:change={handleClick}/>
             <div class="track w-7 h-2 bg-gray-400 rounded-full shadow-inner"></div>
@@ -49,7 +52,7 @@
 </div>
 {:else}
 <div class="switch w-full mb-12">
-    <label for={id} class="flex items-center cursor-pointer">
+    <label for={id} class="flex items-center cursor-pointer" class:disabled>
       <div class="relative">
         <input id={id} type="checkbox" class="sr-only" {disabled} bind:checked on:change={handleClick}/>
         <div class="track block bg-gray-500 w-10 h-6 rounded-full"></div>

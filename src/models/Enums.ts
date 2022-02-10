@@ -11,5 +11,5 @@ export enum CardSubType {
     OnYomi = 'on-yomi',
     KunYomi = 'kun-yomi',
     Reading = 'reading',
-    Undefined = ''
+    None = ''
 }

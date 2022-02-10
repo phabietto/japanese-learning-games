@@ -55,6 +55,7 @@ export class CardModel {
 
     public toBeVerified(): string[] {
         let list = [];
+
         if(this.Meaning && this.Meaning.length > 0 && !this.MeaningVerified){
             list.push(CardSubType.Meaning);
         }
@@ -74,9 +75,34 @@ export class CardModel {
         return this.toBeVerified().length === 0;
     }
 
-    public nextQuestion() {
-        const tbv = this.toBeVerified();
-
-
+    public nextQuestion(): CardSubType {
+        let list = [];
+        switch(this.Type){
+            case ItemType.Radical:
+                return this.Meaning && this.Meaning.length > 0 && !this.MeaningVerified ? CardSubType.Meaning : CardSubType.None;
+            case ItemType.Kanji:
+                list = [];
+                if(this.Meaning && this.Meaning.length > 0 && !this.MeaningVerified){
+                    list.push(CardSubType.Meaning);
+                }
+                if(this.OnYomi && this.OnYomi.length > 0 && !this.OnYomiVerified){
+                    list.push(CardSubType.OnYomi);
+                }
+                if(this.KunYomi && this.KunYomi.length > 0 && !this.KunYomiVerified){
+                    list.push(CardSubType.KunYomi);
+                }
+                return list.length == 0 ? CardSubType.None : list.splice(~~(Math.random() * list.length), 1)[0];
+            case ItemType.Vocabulary:
+                list = [];
+                if(this.Meaning && this.Meaning.length > 0 && !this.MeaningVerified){
+                    list.push(CardSubType.Meaning);
+                }
+                if(this.Reading && this.Reading.length > 0 && !this.ReadingVerified){
+                    list.push(CardSubType.Reading);
+                }
+                return list.length == 0 ? CardSubType.None : list.splice(~~(Math.random() * list.length), 1)[0];
+            default:
+                return CardSubType.None;        
+        }
     }
 }
