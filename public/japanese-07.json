@@ -292,9 +292,9 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"欠",
-      "primary": ""
+      "primary": "lack"
     }
   ],
   "primary": "Lack",
@@ -314,9 +314,9 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"氏",
-      "primary": ""
+      "primary": "clan"
     }
   ],
   "primary": "Family name",
@@ -336,14 +336,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"十",
-      "primary": ""
+      "primary": "cross"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"口",
-      "primary": ""
+      "primary": "mouth"
     }
   ],
   "primary": "Reason",
@@ -363,14 +363,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"木",
-      "primary": ""
+      "primary": "tree"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"乚",
-      "primary": ""
+      "primary": "umbrella"
     }
   ],
   "primary": "Bill",
@@ -390,14 +390,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"口",
-      "primary": ""
+      "primary": "mouth"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"氏",
-      "primary": ""
+      "primary": "clan"
     }
   ],
   "primary": "Peoples",
@@ -417,14 +417,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"https://files.wanikani.com/r0zgc1hvn62mm8px6e5f1j29eia7",
-      "primary": ""
+      "primary": "scooter"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"刀",
-      "primary": ""
+      "primary": "sword"
     }
   ],
   "primary": "Area",
@@ -444,14 +444,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"ｲ",
-      "primary": ""
+      "primary": "leader"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"寸",
-      "primary": ""
+      "primary": "measurement"
     }
   ],
   "primary": "Attach",
@@ -471,19 +471,19 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"L",
-      "primary": ""
+      "primary": "lion"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"丶",
-      "primary": ""
+      "primary": "drop"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"人",
-      "primary": ""
+      "primary": "person"
     }
   ],
   "primary": "From",
@@ -503,14 +503,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"丿",
-      "primary": ""
+      "primary": "slide"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"夫",
-      "primary": ""
+      "primary": "husband"
     }
   ],
   "primary": "Fault",
@@ -530,14 +530,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"心",
-      "primary": ""
+      "primary": "heart"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"丿",
-      "primary": ""
+      "primary": "slide"
     }
   ],
   "primary": "Certain",
@@ -557,9 +557,9 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"未",
-      "primary": ""
+      "primary": "jet"
     }
   ],
   "primary": "Not yet",
@@ -579,9 +579,9 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"末",
-      "primary": ""
+      "primary": "jet"
     }
   ],
   "primary": "End",
@@ -601,19 +601,19 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"木",
-      "primary": ""
+      "primary": "tree"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"亠",
-      "primary": ""
+      "primary": "lid"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"父",
-      "primary": ""
+      "primary": "father"
     }
   ],
   "primary": "School",
@@ -633,19 +633,19 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"https://files.wanikani.com/212p8r2iejuxkxyc5djgz1c5smi3",
-      "primary": ""
+      "primary": "leaf"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"目",
-      "primary": ""
+      "primary": "eye"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"夂",
-      "primary": ""
+      "primary": "winter"
     }
   ],
   "primary": "Summer",
@@ -665,14 +665,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"宀",
-      "primary": ""
+      "primary": "roof"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"豕",
-      "primary": ""
+      "primary": "pig"
     }
   ],
   "primary": "House",
@@ -692,14 +692,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"弓",
-      "primary": ""
+      "primary": "bow"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"冫",
-      "primary": ""
+      "primary": "ice"
     }
   ],
   "primary": "Weak",
@@ -719,14 +719,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"日",
-      "primary": ""
+      "primary": "sun"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"寺",
-      "primary": ""
+      "primary": "temple"
     }
   ],
   "primary": "Time",
@@ -746,14 +746,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"糸",
-      "primary": ""
+      "primary": "thread"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"氏",
-      "primary": ""
+      "primary": "clan"
     }
   ],
   "primary": "Paper",
@@ -773,14 +773,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"言",
-      "primary": ""
+      "primary": "say"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"己",
-      "primary": ""
+      "primary": "oneself"
     }
   ],
   "primary": "Write down",
@@ -800,19 +800,19 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"https://files.wanikani.com/r0zgc1hvn62mm8px6e5f1j29eia7",
-      "primary": ""
+      "primary": "scooter"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"マ",
-      "primary": ""
+      "primary": "mama"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"用",
-      "primary": ""
+      "primary": "task"
     }
   ],
   "primary": "Pass through",
@@ -832,19 +832,19 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"亠",
-      "primary": ""
+      "primary": "lid"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"口",
-      "primary": ""
+      "primary": "mouth"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"冋",
-      "primary": ""
+      "primary": "mustache"
     }
   ],
   "primary": "Tall",
@@ -864,19 +864,19 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"弓",
-      "primary": ""
+      "primary": "bow"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"ム",
-      "primary": ""
+      "primary": "private"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"虫",
-      "primary": ""
+      "primary": "insect"
     }
   ],
   "primary": "Strong",
@@ -896,14 +896,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"孝",
-      "primary": ""
+      "primary": "teacher"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"夂",
-      "primary": ""
+      "primary": "winter"
     }
   ],
   "primary": "Teach",
@@ -923,14 +923,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"王",
-      "primary": ""
+      "primary": "king"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"里",
-      "primary": ""
+      "primary": "village"
     }
   ],
   "primary": "Reason",
@@ -950,14 +950,14 @@
   "level": "7",
   "composition":[
     {
-      "type": "",
+      "type": "radical",
       "character":"糸",
-      "primary": ""
+      "primary": "thread"
     },
     {
-      "type": "",
+      "type": "radical",
       "character":"且",
-      "primary": ""
+      "primary": "top hat"
     }
   ],
   "primary": "Group",
@@ -1183,9 +1183,9 @@
   "level": "7",
   "composition":[
     {
-      "type": "radical",
+      "type": "kanji",
       "character":"他",
-      "primary": ""
+      "primary": "other"
     }
   ],
   "primary": "The others",

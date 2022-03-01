@@ -41,6 +41,7 @@ export class CardModel {
     Reading: string[];
     ReadingMnemonic: string;
 
+    Question: CardSubType;
     OnYomiVerified: boolean;
     KunYomiVerified: boolean;
     ReadingVerified: boolean;
@@ -51,6 +52,53 @@ export class CardModel {
         this.KunYomiVerified = false;
         this.ReadingVerified = false;
         this.MeaningVerified = false;
+    }
+
+    public verify(what: CardSubType, answer: string): boolean {
+        const lca = answer.trim().toLowerCase();
+
+        switch(what) {
+            case CardSubType.KunYomi:
+                if(this.KunYomi.filter((o) => o.toLowerCase().trim() === lca).length > 0){
+                    this.KunYomiVerified = true;
+                    return true;
+                }
+                break;
+            case CardSubType.OnYomi:
+                if(this.OnYomi.filter((o) => o.toLowerCase().trim() === lca).length > 0){
+                    this.OnYomiVerified = true;
+                    return true;
+                }
+                break;
+            case CardSubType.Reading:
+                if(this.Reading.filter((o) => o.toLowerCase().trim() === lca).length > 0){
+                    this.ReadingVerified = true;
+                    return true;
+                }
+                break;
+            case CardSubType.Meaning:
+                if(this.Meaning.filter((o) => o.toLowerCase().trim() === lca).length > 0){
+                    this.MeaningVerified = true;
+                    return true;
+                }
+                break;
+            default: return true;
+        }
+        return false;
+    }
+
+    public getSuggestion(what: CardSubType): string {
+        switch(what) {
+            case CardSubType.KunYomi:
+                return this.KunYomi.join(', ');
+            case CardSubType.OnYomi:
+                return this.OnYomi.join(', ');
+            case CardSubType.Reading:
+                return this.Reading.join(', ');
+            case CardSubType.Meaning:
+                return this.Meaning.join(', ');
+            default: return '';
+        }
     }
 
     public toBeVerified(): string[] {

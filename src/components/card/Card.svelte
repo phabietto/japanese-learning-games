@@ -1,11 +1,10 @@
 <script type="ts">
 import { ColorsHelper } from "../../helpers/colors";
-import { createEventDispatcher, onMount } from "svelte";
+import { createEventDispatcher, onMount, tick } from "svelte";
 import LinkTo from "../link-to/LinkTo.svelte";
 import * as wanakana from "wanakana";
 import { CardModel } from "../../models/CardModel";
 import { CardSubType } from "../../models/Enums";
-import ActiveBreakpointIndicator from "../debug/ActiveBreakpointIndicator.svelte";
 
 export let card: CardModel = new CardModel({});
 export let question: CardSubType = CardSubType.None;
@@ -24,38 +23,62 @@ let answerClass ='bg-gray-100';
 let isChecked = false;
 let isCorrect = false;
 
-onMount(() => {
-    textInput = document.getElementById('wanakana_input');
-});
+// onMount(()=>{
+//     console.log('onmount');
+//     textInput = document.getElementById('wanakana_input');
+// });
 
 $: {
+    console.log('reacted!');
     reset();
-    colors = ch.getCardColor(card.Type);    
-    if(question == 'meaning'){
-        if(textInput){
-            try{
-                wanakana.unbind(textInput);
-            }catch{}
-        }
-    }else{
-        if(textInput){
-            wanakana.bind(textInput);
-        }
-    }
+    handleFocus();
+    colors = ch.getCardColor(card.Type);
     browsing = browse ? 'h-full' : 'h-60';
 }
 
-
+async function handleFocus() {
+    await tick();
+    textInput = document.getElementById('wanakana_input');
+    if(textInput) {
+        const isBound = textInput.getAttribute('data-wanakana-id') != null;
+        console.log(isBound);
+    
+        if(question == CardSubType.Meaning || question == CardSubType.None){
+            if(isBound){
+                wanakana.unbind(textInput);
+                console.log('unbinding wanakana');
+            }
+        }else{
+            if(!isBound){
+                console.log('binding wanakana');
+                wanakana.bind(textInput);
+            }
+        }
+    }
+}
 function checkAnswer(e: KeyboardEvent) { 
     if(e.code === 'Enter') {
+        //  if answer was correct you can go to the next card by pressing 'Enter'
+        if(isChecked && isCorrect){
+            nextCard();
+        }
+
+        const isBound = textInput.getAttribute('data-wanakana-id') != null;
         isChecked = true;
-        isCorrect = true;
-        nextCard();
+        isCorrect = card.verify(question, isBound ? wanakana.toKana(answer) : answer);
+        if(!isCorrect) {
+            console.log('suggestion:', card.getSuggestion(question));
+        }
+        //console.log('answer', card.verify(question, isBound ? wanakana.toKana(answer) : answer));
+        // isChecked = true;
+        // isCorrect = true;
+        // nextCard();
         //if we checked the answer and it's correct let's move to the next question
         // if(isChecked && isCorrect){
         //     nextCard();
         //     return;
         // }
+
         // const lowercaseAnswer = answer.toLowerCase().trim();
         // const acceptedAnswers = [];
         // acceptedAnswers.push(card['primary']);
@@ -73,15 +96,28 @@ function checkAnswer(e: KeyboardEvent) {
     }
 }
 function flip() {
-    flipClass = flipClass.length > 0 ? '' : 'card--rotate';
+    if(browse || (isChecked && isCorrect)) {
+        flipClass = flipClass.length > 0 ? '' : 'card--rotate';
+    }
 }
 function reset() {
     answer = '';
     isChecked = false;
-    questionText = `${card.Type} ${question === CardSubType.Meaning ? 'Meaning': 'Reading'}`;
+    switch(question){
+        case CardSubType.Meaning:
+            questionText = `${card.Type} Meaning`;
+            break;
+        case CardSubType.KunYomi:
+        case CardSubType.OnYomi:
+        case CardSubType.Reading:
+            questionText = `${card.Type} Reading`;
+            break;
+        default:
+            questionText = '-- no question --';
+    }
 }
 function nextCard(){
-    if(browse || (isChecked && isCorrect)){
+    if(browse || (isChecked)){
         isCorrect = false;
         isChecked = false;
         dispatcher('card::next');
@@ -163,7 +199,7 @@ function previousCard(){
                         </div>
                         {/if}
                     {/if}
-                    <input id="wanakana_input" lang="ja" bind:value={answer} class="bg-transparent px-4 outline-none min-w-full text-center text-2xl" on:keyup={checkAnswer} type="text" />
+                    <input id="wanakana_input" lang="ja" bind:value={answer} class="bg-transparent px-4 outline-none min-w-full text-center text-2xl" on:keyup={checkAnswer}  type="text" />
                     <div class="text-gray-600 absolute right-1 top-4 cursor-pointer" on:click={nextCard}>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />

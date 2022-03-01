@@ -10,10 +10,6 @@ import { CardModel } from './models/CardModel';
 import { ItemType } from './models/Enums';
 
 const emptyCard = new CardModel({});
-let question = 'meaning';
-function switchSubtype(){
-  question = question === 'meaning' ? question='on-yomi' : 'meaning';
-}
 
 let loadedCards: CardModel[] = [];
 let selectedCards: CardModel[] = [];
@@ -29,7 +25,7 @@ let areCardTypeSelectorsEnabled = false
 let loadedLevels: number[] = [];
 let isGameMode = false;
 
-onMount(() => {});
+// onMount(() => {});
 
 $: {
   areCardTypeSelectorsEnabled = loadedCards.length > 0;
@@ -86,12 +82,17 @@ function switchCard(direction: number){
         currentCardIndex--;
       }
     }
-  } else {
-    //  'game' mode: forward only, skip verified cards
-    if(gameCards.length == 0) {
-      return;
+  } else {   
+    //  if card has been verified remove it!
+    const cardVerified = currentCard.isFullyVerified();
+    if(cardVerified) {
+      console.log('pre', gameCards);
+      gameCards = [...gameCards.slice(0, currentCardIndex), ...gameCards.slice(currentCardIndex + 1)];
+      console.log('pre', gameCards);
     }
+    console.log('fully verified ?', cardVerified);
 
+    len = gameCards.length;
     if(currentCardIndex >= len - 1) {
       currentCardIndex = 0;
     } else {
@@ -118,15 +119,18 @@ function selectCards(list: CardModel[]){
 }
 
 function selectCard(index: number) {  
+  console.log('select card');
   if(isGameMode){
     if(gameCards.length > 0){
       currentCard = gameCards[index];
       currentCardIndex = index;
     }else{
-      currentCard = emptyCard;
+      console.log('game completed');
+      resetGame();
+      // show end of game card
+      currentCard = new CardModel({"character": "Game completed!"});
       currentCardIndex = -1;
     }
-    currentCard = gameCards[index];
   }else{
     if(selectedCards.length > 0){
       currentCard = selectedCards[index];
@@ -145,7 +149,6 @@ function play(){
   let list = [];
 
   //  select cards for the game
-  //  (duplicate the cards based on the questions available)
   for(let i = 0; i < numberOfCardsToPlayWith; i++){
     let o = tmp.splice(~~(Math.random() * len), 1)[0];
     switch(o.Type){
@@ -154,26 +157,16 @@ function play(){
         break;
       case ItemType.Kanji:
         list.push(o);// meaning
-        list.push(o);// reading
         break;
       case ItemType.Vocabulary:
         list.push(o);// meaning
-        list.push(o);// reading
         break;
     }
     list.push();
     len = tmp.length;
   }
 
-  //  shuffle
-  len = list.length;
-  tmp = [];
-  while(len > 0) {
-    tmp.push(list.splice(~~(Math.random() * len), 1)[0]);
-    len = list.length;
-  }
-
-  gameCards = [...tmp];
+  gameCards = [...list];
   selectCard(0);
 }
 
