@@ -4,7 +4,7 @@ import { createEventDispatcher, onMount, tick } from "svelte";
 import LinkTo from "../link-to/LinkTo.svelte";
 import * as wanakana from "wanakana";
 import { CardModel } from "../../models/CardModel";
-import { CardSubType } from "../../models/Enums";
+import { CardSubType, ResourceType } from "../../models/Enums";
 
 export let card: CardModel = new CardModel({});
 export let question: CardSubType = CardSubType.None;
@@ -23,13 +23,7 @@ let answerClass ='bg-gray-100';
 let isChecked = false;
 let isCorrect = false;
 
-// onMount(()=>{
-//     console.log('onmount');
-//     textInput = document.getElementById('wanakana_input');
-// });
-
 $: {
-    console.log('reacted!');
     reset();
     handleFocus();
     colors = ch.getCardColor(card.Type);
@@ -38,10 +32,8 @@ $: {
 
 async function handleFocus() {
     await tick();
-    textInput = document.getElementById('wanakana_input');
     if(textInput) {
         const isBound = textInput.getAttribute('data-wanakana-id') != null;
-        console.log(isBound);
     
         if(question == CardSubType.Meaning || question == CardSubType.None){
             if(isBound){
@@ -58,8 +50,8 @@ async function handleFocus() {
 }
 function checkAnswer(e: KeyboardEvent) { 
     if(e.code === 'Enter') {
-        //  if answer was correct you can go to the next card by pressing 'Enter'
-        if(isChecked && isCorrect){
+        //  when answer has been checked you can go to the next card by pressing 'Enter'
+        if(isChecked){
             nextCard();
         }
 
@@ -69,28 +61,6 @@ function checkAnswer(e: KeyboardEvent) {
         if(!isCorrect) {
             console.log('suggestion:', card.getSuggestion(question));
         }
-        //console.log('answer', card.verify(question, isBound ? wanakana.toKana(answer) : answer));
-        // isChecked = true;
-        // isCorrect = true;
-        // nextCard();
-        //if we checked the answer and it's correct let's move to the next question
-        // if(isChecked && isCorrect){
-        //     nextCard();
-        //     return;
-        // }
-
-        // const lowercaseAnswer = answer.toLowerCase().trim();
-        // const acceptedAnswers = [];
-        // acceptedAnswers.push(card['primary']);
-        // acceptedAnswers.concat(card['alternatives']);
-        // if(question === 'meaning'){
-        //     if(acceptedAnswers.filter((o) => o.toLowerCase().trim() === lowercaseAnswer).length > 0){
-        //         isCorrect = true;
-        //     }
-        // }else if(card[question] === wanakana.toKana(textInput.value)) {
-        //     isCorrect = true;
-        // }
-        // isChecked = true;
     }else{
         isChecked = false;
     }
@@ -102,6 +72,7 @@ function flip() {
 }
 function reset() {
     answer = '';
+    flipClass = '';
     isChecked = false;
     switch(question){
         case CardSubType.Meaning:
@@ -167,7 +138,15 @@ function previousCard(){
             <div class="{browsing} min-w-full bg-gradient-to-br {colors} flex justify-center items-center relative cursor-pointer"
                  title="Double-click to flip card"     
                  on:dblclick={flip}>
-                <h1 class="font-normal text-7xl text-white select-none">{card.Character}</h1>
+                <h1 class="font-normal text-7xl text-white select-none">
+                    {#if card.CharacterType === ResourceType.Svg}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14" viewBox="0 0 24 24" fill="currentColor">
+                    {@html card.Character}
+                    </svg>
+                    {:else}
+                    {card.Character}
+                    {/if}
+                </h1>
                 {#if browse}
                 <div class="text-white absolute left-4 cursor-pointer rounded-full bg-white bg-opacity-5" on:click={previousCard} on:dblclick|preventDefault|stopPropagation>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 transform rotate-180" viewBox="0 0 20 20" fill="currentColor">
@@ -199,7 +178,7 @@ function previousCard(){
                         </div>
                         {/if}
                     {/if}
-                    <input id="wanakana_input" lang="ja" bind:value={answer} class="bg-transparent px-4 outline-none min-w-full text-center text-2xl" on:keyup={checkAnswer}  type="text" />
+                    <input id="wanakana_input" lang="ja" bind:value={answer} bind:this={textInput} readonly={isChecked} class="bg-transparent px-4 outline-none min-w-full text-center text-2xl" on:keyup={checkAnswer}  type="text" />
                     <div class="text-gray-600 absolute right-1 top-4 cursor-pointer" on:click={nextCard}>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
@@ -212,7 +191,15 @@ function previousCard(){
         </div>
         <div class="card--back shadow-lg flex flex-col">
             <div class="h-60 bg-gray-100 hover:bg-gray-200 flex justify-center items-center relative cursor-pointer" title="Double-click to flip card" on:dblclick={flip}>
-                <h1 class="font-normal text-7xl text-gray-800 select-none" on:dblclick|stopPropagation>{card.Character}</h1>
+                <h1 class="font-normal text-7xl text-gray-800 select-none" on:dblclick|stopPropagation>
+                    {#if card.CharacterType === ResourceType.Svg}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14" viewBox="0 0 24 24" fill="currentColor">
+                    {@html card.Character}
+                    </svg>
+                    {:else}
+                    {card.Character}
+                    {/if}
+                </h1>
                 <div class="absolute top-1 left-1 ">
                     {#each card.Composition as item (item.Character)}
                     <LinkTo title={item.Primary} type={item.Type}>{item.Character}</LinkTo>
@@ -243,6 +230,13 @@ function previousCard(){
                         <span class="text-sm text-gray-500">{@html card.KunYomi.join(',')}</span>
                     </div>
                     <p class="font-normal text-gray-600 text-xs mb-4">{@html card.KunYomiMnemonic}</p>    
+                </div>
+                {:else if question == CardSubType.GameResult}
+                <div>
+                    <div class="font-medium text-base text-gray-800 mb-2">
+                        <span class="text-lg font-bold">Game results</span>
+                    </div>
+                    <p class="font-normal text-gray-600 text-xs mb-4">{@html card.GameResults}</p>
                 </div>
                 {:else}
                 <div>

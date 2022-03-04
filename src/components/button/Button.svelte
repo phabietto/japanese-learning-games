@@ -5,6 +5,7 @@
     export let disabled = false;
     export let iconLeft = true;
     export let primary = null;
+    export let secondary = null;
     export let fill = 'fill-current';
     export let stroke = 'stroke-transparent';
 
@@ -24,6 +25,7 @@
     type="button" 
     {disabled} 
     class:primary
+    class:secondary
     on:click
 >
     {#if !iconLeft}
@@ -45,6 +47,9 @@
     }
     button.primary {
         @apply text-white bg-blue-500 hover:bg-blue-600
+    }
+    button.secondary {
+        @apply border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white text-center
     }
     button:disabled {
         @apply text-gray-400 bg-gray-100 cursor-not-allowed border-gray-200

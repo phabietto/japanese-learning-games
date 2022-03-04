@@ -72,7 +72,7 @@
         type="number"
         pattern="[0-9]*"
         placeholder="cards"
-        class="bg-transparent outline-none text-base px-1 text-right {inputPadding} {classes}"
+        class="bg-transparent outline-none text-base px-2 text-right {inputPadding} {classes}"
         {max} {min} {step} {value}
         {readonly} {disabled}
         on:change
