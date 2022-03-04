@@ -104,13 +104,13 @@ function selectCards(list: CardModel[]){
   selectedCards = [];
   currentCardIndex = 0;
   if(radicalsToggle){
-    selectedCards = [...list.filter((o) => o.Type === ItemType.Radical).map(o => o.Clone())];
+    selectedCards = [...list.filter((o) => o.Type === ItemType.Radical)];
   }
   if(kanjisToggle){
-    selectedCards = [...selectedCards, ...list.filter((o) => o.Type === ItemType.Kanji).map(o => o.Clone())]
+    selectedCards = [...selectedCards, ...list.filter((o) => o.Type === ItemType.Kanji)]
   }
   if(vocabularyToggle){
-    selectedCards = [...selectedCards, ...list.filter((o) => o.Type === ItemType.Vocabulary).map(o => o.Clone())]
+    selectedCards = [...selectedCards, ...list.filter((o) => o.Type === ItemType.Vocabulary)]
   }
   selectCard(currentCardIndex);
 }
@@ -146,7 +146,7 @@ function play(){
 
   //  select cards for the game
   for(let i = 0; i < numberOfCardsToPlayWith; i++){
-    let o = tmp.splice(~~(Math.random() * len), 1)[0];
+    let o = tmp.splice(~~(Math.random() * len), 1)[0].Clone();
     switch(o.Type){
       case ItemType.Radical:
         list.push(o);// meaning
