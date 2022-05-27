@@ -211,8 +211,8 @@ function resetGame(){
         </Button>
       </div>
       <div class="flex flex-col justify-start w-1/3">
-        <Switch type="toggle" id="radical" text="Radicals" disabled={!areCardTypeSelectorsEnabled} bind:checked={radicalsToggle} on:switch::click={() => selectCards(loadedCards)} />
-        <Switch type="toggle" id="kanji" text="Kanjis" disabled={!areCardTypeSelectorsEnabled} bind:checked={kanjisToggle} on:switch::click={() => selectCards(loadedCards)} />
+        <Switch type="toggle" id="radical" text="部首 Radicals" disabled={!areCardTypeSelectorsEnabled} bind:checked={radicalsToggle} on:switch::click={() => selectCards(loadedCards)} />
+        <Switch type="toggle" id="kanji" text="漢字 Kanjis" disabled={!areCardTypeSelectorsEnabled} bind:checked={kanjisToggle} on:switch::click={() => selectCards(loadedCards)} />
         <Switch type="toggle" id="vocabulary" text="Vocabulary" disabled={!areCardTypeSelectorsEnabled} bind:checked={vocabularyToggle} on:switch::click={() => selectCards(loadedCards)} />
       </div>
       <div class="text-left">
